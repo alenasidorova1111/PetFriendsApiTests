@@ -21,40 +21,42 @@ class PetFriends:
             'password': password,
         }
 
-        res = requests.get(self.base_url + 'api/key', headers=headers)
-        status = res.status_code
+        result = requests.get(self.base_url + 'api/key', headers=headers)
+        # status = res.status_code
         # result = ""
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
+        # try:
+        #    result = res.json()
+        # except json.decoder.JSONDecodeError:
+        #    result = res.text
+        # return status, result
+        return result
 
-    def get_list_of_pets(self, auth_key: json, filter: str = '') -> json:
+    def get_list_of_pets(self, auth_key: str, filter_: str = '') -> json:
         """
         Method makes a get request to API server with parameters:
         :param auth_key: user's api key
-        :param filter: 1) empty filter returns list and info about all pets
-                       2) filter "my_pets" returns list and info about user's pets
+        :param filter_: 1) empty filter_ returns list and info about all pets
+                       2) filter_ "my_pets" returns list and info about user's pets
         :return: 1) status code of request
                  2) json file result with list and info about all pets
         """
 
-        headers = {'auth_key': auth_key['key']}
-        filter = {'filter': filter}
+        filter_ = {'filter': filter_}
+        headers = {'auth_key': auth_key}
 
-        res = requests.get(self.base_url + 'api/pets', headers=headers, params=filter)
-        status = res.status_code
+        result = requests.get(self.base_url + 'api/pets', headers=headers, params=filter_)
+        # status = res.status_code
         # result = ""
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
+        # try:
+        #    result = res.json()
+        # except json.decoder.JSONDecodeError:
+        #    result = res.text
+        # return status, result
+        return result
 
-    def create_pet_simple(self, auth_key: json, name: str, animal_type: str, age=str) -> json:
+    def create_pet_simple(self, auth_key: str, name: str, animal_type: str, age=str) -> json:
         """
         Method makes a post request to API server with parameters:
         :param auth_key: user's api key
@@ -70,20 +72,13 @@ class PetFriends:
             'animal_type': animal_type,
             'age': age
         }
+        headers = {'auth_key': auth_key}
 
-        headers = {'auth_key': auth_key['key']}
+        result = requests.post(self.base_url + 'api/create_pet_simple', headers=headers, data=data)
 
-        res = requests.post(self.base_url + 'api/create_pet_simple', headers=headers, data=data)
-        status = res.status_code
-        # result = ""
+        return result
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
-
-    def set_pet_photo(self, auth_key: json, pet_id: str, pet_photo: str) -> json:
+    def set_pet_photo(self, auth_key: str, pet_id: str, pet_photo: str) -> json:
         """
         Method makes a post request to API server with parameters:
         :param auth_key: user's api key
@@ -92,24 +87,18 @@ class PetFriends:
         :return: 1) status code of request
                  2) json file result with info about pet, which photo was set
         """
+
         data = MultipartEncoder(
             fields={
                 'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg')
             })
+        headers = {'auth_key': auth_key, 'Content-Type': data.content_type}
 
-        headers = {'auth_key': auth_key['key'], 'Content-Type': data.content_type}
+        result = requests.post(self.base_url + 'api/pets/set_photo' + pet_id, headers=headers, data=data)
 
-        res = requests.post(self.base_url + 'api/pets/set_photo' + pet_id, headers=headers, data=data)
-        status = res.status_code
-        # result = ""
+        return result
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
-
-    def add_new_pet(self, auth_key: json, name: str, animal_type: str, age: str, pet_photo: str) -> json:
+    def add_new_pet(self, auth_key: str, name: str, animal_type: str, age: str, pet_photo: str) -> json:
         """
         Method makes a post request to API server with parameters:
         :param auth_key: user's api key
@@ -128,39 +117,26 @@ class PetFriends:
                 'age': age,
                 'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg')
             })
+        headers = {'auth_key': auth_key, 'Content-Type': data.content_type}
 
-        headers = {'auth_key': auth_key['key'], 'Content-Type': data.content_type}
+        result = requests.post(self.base_url + 'api/pets', headers=headers, data=data)
 
-        res = requests.post(self.base_url + 'api/pets', headers=headers, data=data)
-        status = res.status_code
-        # result = ""
+        return result
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
-
-    def delete_pet(self, auth_key: json, pet_id: str):
+    def delete_pet(self, auth_key: str, pet_id: str):
         """
         Method makes a delete request to API server with parameters:
         :param auth_key: user's api key
         :param pet_id: unique pet's id
         :return: status code of request
         """
-        headers = {'auth_key': auth_key['key']}
+        headers = {'auth_key': auth_key}
 
-        res = requests.delete(self.base_url + 'api/pets/' + pet_id, headers=headers)
-        status = res.status_code
-        # result = ""
+        result = requests.delete(self.base_url + 'api/pets/' + pet_id, headers=headers)
 
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
+        return result
 
-    def update_pet(self, auth_key: json, pet_id: str, name: str, animal_type: str, age: str) -> json:
+    def update_pet(self, auth_key: str, pet_id: str, name: str, animal_type: str, age: str) -> json:
         """
         Method makes a put request to API server with parameters:
         :param auth_key: user's api key
@@ -177,15 +153,8 @@ class PetFriends:
             'animal_type': animal_type,
             'age': age
         }
+        headers = {'auth_key': auth_key}
 
-        headers = {'auth_key': auth_key['key']}
+        result = requests.put(self.base_url + 'api/pets/' + pet_id, headers=headers, data=data)
 
-        res = requests.put(self.base_url + 'api/pets/' + pet_id, headers=headers, data=data)
-        status = res.status_code
-        # result = ""
-
-        try:
-            result = res.json()
-        except json.decoder.JSONDecodeError:
-            result = res.text
-        return status, result
+        return result
