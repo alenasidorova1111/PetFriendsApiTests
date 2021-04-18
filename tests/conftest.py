@@ -1,6 +1,6 @@
 import pytest
 from api import PetFriends
-from settings import valid_email, valid_password
+from settings import v_em, v_pas
 import functools
 
 
@@ -11,20 +11,15 @@ def get_api_key_for_test():
     """
     pf = PetFriends()
 
-    status = pf.get_api_key(valid_email, valid_password).status_code
-    auth_key = pf.get_api_key(valid_email, valid_password).json()['key']
+    result = pf.get_api_key(v_em[0], v_pas[0])
 
-    assert status == 200
-    assert len(auth_key) == 56
+    assert result.status_code == 200
+    assert len(result.json()['key']) == 56
 
-    yield auth_key
-
-    # print('fixture teardown')
+    yield result.json()['key']
 
 
 def test_log(func):
-    """Выводит сигнатуру функции и возвращаемое значение"""
-
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         log_file = open('log.txt', 'a+')

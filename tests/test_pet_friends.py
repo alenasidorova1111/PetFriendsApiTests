@@ -1,15 +1,17 @@
 from api import PetFriends
-from settings import valid_email, valid_password, invalid_email, invalid_password
+from settings import v_em, v_pas, w_pas, w_em
 import os
 import pytest
 from tests.conftest import test_log
+
 
 pf = PetFriends()
 
 
 class TestGetApiKey:
     @pytest.mark.pos
-    def test_get_api_key_for_valid_user(self, email=valid_email, password=valid_password):
+    @test_log
+    def test_get_api_key_for_valid_user(self, email=v_em[0], password=v_pas[0]):
         """
         Tests getting user api key with valid user email and password
         """
@@ -20,7 +22,7 @@ class TestGetApiKey:
         assert len(result.json()['key']) == 56
 
     @pytest.mark.neg
-    def test_get_api_key_for_invalid_user(self, email=invalid_email, password=valid_password):
+    def test_get_api_key_for_invalid_user(self, email=w_em[0], password=v_pas[0]):
         """
         Tests getting user api key with invalid user email and valid password
         """
@@ -30,7 +32,7 @@ class TestGetApiKey:
         assert result.status_code == 403
 
     @pytest.mark.neg
-    def test_get_api_key_for_invalid_password(self, email=valid_email, password=invalid_password):
+    def test_get_api_key_for_invalid_password(self, email=v_em[0], password=w_pas[0]):
         """
         Tests getting user api key with valid user email and invalid password
         """
@@ -65,10 +67,7 @@ class TestGetAllPets:
 
 
 class TestCreatePetSimple:
-    @pytest.mark.pos
-    @test_log
-    def test_create_pet_simple_with_valid_data(self, get_api_key_for_test, name='Creature1', animal_type='Monster',
-                                               age='2'):
+    def test_create_pet_simple_with_valid_data(self, get_api_key_for_test, name, animal_type, age):
         """
         Tests if it's possible to add new pet with valid data:
         :param name: pet's name

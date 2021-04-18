@@ -110,13 +110,14 @@ class PetFriends:
                  2) json file result with info about created pet
         """
 
-        data = MultipartEncoder(
+        data = (MultipartEncoder(
             fields={
                 'name': name,
                 'animal_type': animal_type,
                 'age': age,
                 'pet_photo': (pet_photo, open(pet_photo, 'rb'), 'image/jpeg')
-            })
+            }))
+
         headers = {'auth_key': auth_key, 'Content-Type': data.content_type}
 
         result = requests.post(self.base_url + 'api/pets', headers=headers, data=data)
